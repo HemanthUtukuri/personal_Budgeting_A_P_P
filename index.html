@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budgeting App</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #8360c3, #2ebf91);
+            margin: 0;
+            padding: 0;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 30px auto;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 30px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #ffdd57;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            outline: none;
+            background: #f4f4f4;
+            color: #333;
+        }
+
+        button {
+            background-color: #ffdd57;
+            color: #333;
+            border: none;
+            padding: 12px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 6px;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #ffc107;
+            transform: scale(1.05);
+        }
+
+        .summary {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .summary h3 {
+            margin-bottom: 15px;
+            font-size: 22px;
+            color: #ffdd57;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .summary p {
+            margin: 8px 0;
+            font-size: 18px;
+        }
+
+        .expense-list {
+            margin-top: 20px;
+        }
+
+        .expense-list h3 {
+            margin-bottom: 15px;
+            font-size: 20px;
+            color: #ffdd57;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .expense-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            margin-bottom: 8px;
+        }
+
+        .expense-item span {
+            font-size: 16px;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Budgeting App (₹)</h1>
+
+        <div class="form-group">
+            <label for="income">Enter Your Income (₹):</label>
+            <input type="number" id="income" placeholder="e.g., 50000">
+        </div>
+
+        <div class="form-group">
+            <label for="expense-category">Expense Category:</label>
+            <select id="expense-category">
+                <option value="Food">Food</option>
+                <option value="Rent">Rent</option>
+                <option value="Utilities">Utilities</option>
+                <option value="Transportation">Transportation</option>
+                <option value="Education">Education</option>
+                <option value="Miscellaneous">Miscellaneous</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="expense-amount">Expense Amount (₹):</label>
+            <input type="number" id="expense-amount" placeholder="e.g., 2000">
+        </div>
+
+        <button onclick="addExpense()">Add Expense</button>
+
+        <div class="summary">
+            <h3>Budget Summary</h3>
+            <p><strong>Total Income:</strong> ₹<span id="total-income">0</span></p>
+            <p><strong>Total Expenses:</strong> ₹<span id="total-expenses">0</span></p>
+            <p><strong>Remaining Balance:</strong> ₹<span id="remaining-balance">0</span></p>
+        </div>
+
+        <div class="expense-list" id="expense-list">
+            <h3>Expense Details</h3>
+            <!-- Expenses will be listed here dynamically -->
+        </div>
+    </div>
+
+    <script>
+        let totalIncome = 0;
+        let totalExpenses = 0;
+
+        function addExpense() {
+            // Get input values
+            const incomeInput = document.getElementById('income');
+            const expenseCategory = document.getElementById('expense-category').value;
+            const expenseAmount = parseFloat(document.getElementById('expense-amount').value);
+
+            // Add income if provided
+            if (incomeInput.value !== "") {
+                totalIncome = parseFloat(incomeInput.value);
+                incomeInput.value = ""; // Clear the income input field
+            }
+
+            // Update total expenses
+            if (!isNaN(expenseAmount) && expenseAmount > 0) {
+                totalExpenses += expenseAmount;
+
+                // Add expense to the list
+                const expenseList = document.getElementById('expense-list');
+                const expenseItem = document.createElement('div');
+                expenseItem.classList.add('expense-item');
+                expenseItem.innerHTML = `
+                    <span>${expenseCategory}</span>
+                    <span>₹${expenseAmount.toFixed(2)}</span>
+                `;
+                expenseList.appendChild(expenseItem);
+
+                // Clear the expense amount input field
+                document.getElementById('expense-amount').value = "";
+            }
+
+            // Update budget summary
+            const remainingBalance = totalIncome - totalExpenses;
+            document.getElementById('total-income').textContent = totalIncome.toFixed(2);
+            document.getElementById('total-expenses').textContent = totalExpenses.toFixed(2);
+            document.getElementById('remaining-balance').textContent = remainingBalance.toFixed(2);
+        }
+    </script>
+</body>
+</html>
